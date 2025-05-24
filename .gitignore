@@ -1,0 +1,57 @@
+node_modules# Node modules
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+**/dist/
+**/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# dotenv environment variables
+.env
+.env.local
+.env.*.local
+
+# Vite cache
+.vite/
+**/.vite/
+
+# VSCode settings
+.vscode/
+
+# Output of 'npm pack'
+*.tgz
+
+# Coverage reports
+coverage/
+**/coverage/
+
+# IDEs
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Optional: TypeScript cache
+*.tsbuildinfo
+
+# Optional: React + Vite + eslint related
+.eslintcache
