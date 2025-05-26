@@ -1,5 +1,4 @@
 const express = require("express");
-const { adminOnly } = require("../middlewares/authMiddleware");
 const { getAllUsers, getUserById, deleteUser } = require("../controllers/userController");
 const { protect  , adminOnly} = require("../middlewares/authMiddleware");
 
