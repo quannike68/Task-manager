@@ -8,14 +8,16 @@ const {
     deleteTask,
     updateTaskStatus,
     updateTaskCheckList,
+    dashboardData,
+    userDashboardData
 
 } = require('../controllers/taskController');
 
 const router = express.Router();
 
 
-// router.get('/dashboard-data' , protect , DashboardData); // Get dashboard data
-// router.get('user-dashboard-data' , protect , UserDashboardData); // Get user dashboard data
+router.get('/dashboard-data' , protect , dashboardData); // Get dashboard data
+router.get('/user-dashboard-data' , protect , userDashboardData); // Get user dashboard data
 router.get('/' ,protect , getTasks); // Get tasks (admin:all , member:assigned)
 router.get('/:id', protect, getTaskById); // Get task by id
 router.post('/' , protect , adminOnly , createTask); // Create task
