@@ -1,10 +1,12 @@
 import React from 'react'
-
+import { useUserAuth } from '../../hooks/useUserAuth'
+import DashboardLayout from '../../components/layouts/DashboardLayout';
 const Dashboard = () => {
+  useUserAuth();
   return (
-    <div>
-      
-    </div>
+    <DashboardLayout>
+      User/dashboard
+    </DashboardLayout>
   )
 }
 
