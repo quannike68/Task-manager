@@ -47,7 +47,26 @@ const ManageTask = () => {
     navigate("/admin/create-task", { state: { taskId: taskData._id } });
   };
 
-  const downloadTask = async (taskId) => {};
+  const handleDownloadReport = async () => {
+    try {
+      const response = await axiosInstance.get(API_PATHS.REPORTS.EXPORT_TASKS, {
+        responseType: "blob", // Quan trọng để tải file dạng binary
+      });
+
+      // Tạo URL cho blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "task_details.xlsx"); // Tên file khi tải về
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url); // Giải phóng bộ nhớ
+    } catch (error) {
+      console.error("Error downloading task details:", error);
+      toast.error("Failed to download task details. Please try again.");
+    }
+  };
 
   useEffect(() => {
     getAllTasks();
@@ -62,7 +81,7 @@ const ManageTask = () => {
 
             <button
               className="flex lg:hidden download-btn"
-              onClick={downloadTask}
+              onClick={handleDownloadReport}
             >
               <LuFileSpreadsheet className="text-lg" />
               Download
@@ -79,7 +98,7 @@ const ManageTask = () => {
 
               <button
                 className="hidden lg:flex download-btn"
-                onClick={downloadTask}
+                onClick={handleDownloadReport}
               >
                 <LuFileSpreadsheet className="text-lg" />
                 Download Report

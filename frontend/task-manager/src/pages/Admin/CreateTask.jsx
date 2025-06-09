@@ -10,11 +10,13 @@ import SelectDropdown from "../../components/inputs/SelectDropdown";
 import SelectUsers from "../../components/inputs/SelectUsers";
 import TodoListInput from "../../components/inputs/TodoListInput";
 import AddAttachmentsInput from "../../components/inputs/AddAttachmentsInput";
+import DeleteAlert from "../../components/DeleteAlert";
+import Modal from "../../components/Modal";
 import moment from "moment";
 const CreateTask = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { taskId } = location.state || {};
-  console.log("Task ID from state:", taskId);
 
   const [taskData, setTaskData] = useState({
     title: "",
@@ -73,7 +75,31 @@ const CreateTask = () => {
   };
 
   //UpdateTask
-  const updateTask = async () => {};
+  const updateTask = async () => {
+    setLoading(true);
+    try {
+      const todoList = taskData.todoCheckList.map((item) => {
+        const prevTodoCheckList = currentTask?.todoCheckList || [];
+        const matchedTask = prevTodoCheckList.find((task) => task.text == item);
+        return {
+          text: item,
+          completed: matchedTask ? matchedTask.completed : false,
+        };
+      });
+
+      const res = await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId), {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate).toISOString(),
+        todoCheckList: todoList,
+      });
+      if (res.data) {
+        toast.success("Task updated successfully.");
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast.error("Failed to update task.");
+    }
+  };
 
   const handleSupmit = async () => {
     if (!taskData.title.trim()) {
@@ -110,6 +136,7 @@ const CreateTask = () => {
       const res = await axiosInstance.get(
         API_PATHS.TASKS.GET_TASK_BY_ID(taskId)
       );
+      console.log("Task details:", res.data);
 
       if (res.data) {
         const task = res.data;
@@ -122,7 +149,7 @@ const CreateTask = () => {
           dueDate: task.dueDate
             ? moment(task.dueDate).format("YYYY-MM-DD")
             : null,
-          assignedTo: task?.assignedTo?.map((item) => item?._id) || [],
+          assignedTo: task.assignedTo,
           todoCheckList: task.todoCheckList?.map((item) => item?.text) || [],
           attachments: task.attachments || [],
         }));
@@ -133,7 +160,17 @@ const CreateTask = () => {
   };
 
   //Delete task
-  const DeleteTask = async () => {};
+  const DeleteTask = async () => {
+    try {
+      await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(taskId));
+      toast.success("Task deleted successfully.");
+      setOpentDeleteAlert(false);
+      navigate("/admin/tasks");
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast.error("Failed to delete task.");
+    }
+  };
 
   useEffect(() => {
     if (taskId) {
@@ -263,6 +300,17 @@ const CreateTask = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={opentDeleteAlert}
+        onClose={() => setOpentDeleteAlert(false)}
+        title="Delete Task"
+      >
+        <DeleteAlert
+          content="Are you sure you want to delete this task?"
+          onDelete={() => DeleteTask()}
+        />
+      </Modal>
     </DashboardLayout>
   );
 };
